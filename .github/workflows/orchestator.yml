@@ -1,0 +1,24 @@
+
+name: App Orchestrator
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+        types: [opened, synchronize, reopened, closed]
+
+permissions:
+    contents: write
+    packages: write
+    deployments: write
+
+jobs:
+    lifecycle:
+        uses: jairbs98/devops-workflows/.github/workflows/controller.yml@main
+        with:
+            app_name: "api-pokemon-meta-go"
+            app_type: "go-api"
+            deploy_type: "container"
+            port: "8080"
+        secrets: inherit

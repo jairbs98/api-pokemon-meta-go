@@ -1,0 +1,225 @@
+basePath: /api/v1
+definitions:
+  api-pokemon-meta-go_internal_domain.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  api-pokemon-meta-go_internal_domain.MetaSnapshotItem:
+    properties:
+      abilities:
+        items:
+          type: integer
+        type: array
+      base_stats:
+        items:
+          type: integer
+        type: array
+      items:
+        items:
+          type: integer
+        type: array
+      moves:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      natures:
+        items:
+          type: integer
+        type: array
+      rank:
+        type: integer
+      spreads:
+        items:
+          type: integer
+        type: array
+      top_ability:
+        type: string
+      top_item:
+        type: string
+      usage_percentage:
+        type: number
+    type: object
+  api-pokemon-meta-go_internal_domain.PokemonTrendResponse:
+    properties:
+      history:
+        items:
+          $ref: '#/definitions/api-pokemon-meta-go_internal_domain.TrendPoint'
+        type: array
+      pokemon_name:
+        type: string
+    type: object
+  api-pokemon-meta-go_internal_domain.SpeedCreeperItem:
+    properties:
+      ataque:
+        type: integer
+      name:
+        type: string
+      usage_percentage:
+        type: number
+      velocidad:
+        type: integer
+    type: object
+  api-pokemon-meta-go_internal_domain.TrendPoint:
+    properties:
+      day:
+        type: string
+      label:
+        type: string
+      value:
+        type: number
+    type: object
+  api-pokemon-meta-go_internal_domain.WallbreakerItem:
+    properties:
+      atk_base:
+        type: integer
+      move_name:
+        type: string
+      name:
+        type: string
+      usage_percentage:
+        type: number
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API de analítica competitiva de Pokémon migrada a Go.
+  title: Pokémon Meta API
+  version: "1.0"
+paths:
+  /analytics/trend:
+    get:
+      parameters:
+      - description: Pokemon Name
+        in: query
+        name: name
+        required: true
+        type: string
+      - default: ou
+        description: Tier
+        in: query
+        name: tier
+        type: string
+      - default: gen9
+        description: Generation
+        in: query
+        name: gen
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api-pokemon-meta-go_internal_domain.PokemonTrendResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api-pokemon-meta-go_internal_domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api-pokemon-meta-go_internal_domain.ErrorResponse'
+      summary: Obtener Tendencia de Uso
+      tags:
+      - Analytics
+  /anti-meta/speed-creepers:
+    get:
+      parameters:
+      - default: ou
+        description: Tier
+        in: query
+        name: tier
+        type: string
+      - default: gen9
+        description: Generation
+        in: query
+        name: gen
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api-pokemon-meta-go_internal_domain.SpeedCreeperItem'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api-pokemon-meta-go_internal_domain.ErrorResponse'
+      summary: Obtener Anti-Meta Speed Creepers
+      tags:
+      - Anti-Meta
+  /anti-meta/wallbreakers:
+    get:
+      parameters:
+      - default: ou
+        description: Tier
+        in: query
+        name: tier
+        type: string
+      - default: gen9
+        description: Generation
+        in: query
+        name: gen
+        type: string
+      - default: ice
+        description: Move Type
+        in: query
+        name: move_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api-pokemon-meta-go_internal_domain.WallbreakerItem'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api-pokemon-meta-go_internal_domain.ErrorResponse'
+      summary: Obtener Anti-Meta Wallbreakers
+      tags:
+      - Anti-Meta
+  /meta/snapshot:
+    get:
+      parameters:
+      - default: ou
+        description: Tier
+        in: query
+        name: tier
+        type: string
+      - default: gen9
+        description: Generation
+        in: query
+        name: gen
+        type: string
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api-pokemon-meta-go_internal_domain.MetaSnapshotItem'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api-pokemon-meta-go_internal_domain.ErrorResponse'
+      summary: Obtener Snapshot del Meta
+      tags:
+      - Meta
+swagger: "2.0"
