@@ -350,7 +350,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "/api/v1",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Pokémon Meta API",
 	Description:      "API de analítica competitiva de Pokémon migrada a Go.",
