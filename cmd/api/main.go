@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings" // Importante para validar prefijos y sufijos de las URLs
 
 	"api-pokemon-meta-go/internal/handler"
 	"api-pokemon-meta-go/internal/repository"
@@ -37,7 +38,23 @@ func main() {
 	router := gin.Default()
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowAllOrigins = true
+
+	corsConfig.AllowOriginFunc = func(origin string) bool {
+		if strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:") {
+			return true
+		}
+
+		if origin == "https://critstats.qa-sw.space" {
+			return true
+		}
+
+		if strings.HasSuffix(origin, ".qa-sw.space") {
+			return true
+		}
+
+		return false
+	}
+
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
 	corsConfig.ExposeHeaders = []string{"Content-Length"}
@@ -49,7 +66,7 @@ func main() {
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error_real_de_swagger": err.Error(),
-				"mensaje":               "¡Toma captura de este error y pásamelo!",
+				"mensaje":               "Error cargando documento swagger",
 			})
 			return
 		}
