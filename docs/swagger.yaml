@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   api-pokemon-meta-go_internal_domain.ErrorResponse:
     properties:
