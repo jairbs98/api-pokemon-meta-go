@@ -33,14 +33,16 @@ func (h *PokemonHandler) GetMetaSnapshot(c *gin.Context) {
 	gen := c.DefaultQuery("gen", "gen9")
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 
-	var result []domain.MetaSnapshotItem
-	var err error
-
-	result, err = h.service.GetMetaSnapshot(tier, gen, limit)
+	result, err := h.service.GetMetaSnapshot(tier, gen, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		return
 	}
+
+	if result == nil {
+		result = []domain.MetaSnapshotItem{}
+	}
+
 	c.JSON(http.StatusOK, result)
 }
 
@@ -57,14 +59,16 @@ func (h *PokemonHandler) GetSpeedCreepers(c *gin.Context) {
 	tier := c.DefaultQuery("tier", "ou")
 	gen := c.DefaultQuery("gen", "gen9")
 
-	var result []domain.SpeedCreeperItem
-	var err error
-
-	result, err = h.service.GetSpeedCreepers(tier, gen)
+	result, err := h.service.GetSpeedCreepers(tier, gen)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		return
 	}
+
+	if result == nil {
+		result = []domain.SpeedCreeperItem{}
+	}
+
 	c.JSON(http.StatusOK, result)
 }
 
@@ -83,14 +87,16 @@ func (h *PokemonHandler) GetWallbreakers(c *gin.Context) {
 	gen := c.DefaultQuery("gen", "gen9")
 	moveType := c.DefaultQuery("move_type", "ice")
 
-	var result []domain.WallbreakerItem
-	var err error
-
-	result, err = h.service.GetWallbreakers(tier, gen, moveType)
+	result, err := h.service.GetWallbreakers(tier, gen, moveType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		return
 	}
+
+	if result == nil {
+		result = []domain.WallbreakerItem{}
+	}
+
 	c.JSON(http.StatusOK, result)
 }
 
@@ -114,13 +120,15 @@ func (h *PokemonHandler) GetPokemonTrend(c *gin.Context) {
 	tier := c.DefaultQuery("tier", "ou")
 	gen := c.DefaultQuery("gen", "gen9")
 
-	var result *domain.PokemonTrendResponse
-	var err error
-
-	result, err = h.service.GetPokemonTrend(name, tier, gen)
+	result, err := h.service.GetPokemonTrend(name, tier, gen)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
 		return
 	}
+
+	if result != nil && result.History == nil {
+		result.History = []domain.TrendPoint{}
+	}
+
 	c.JSON(http.StatusOK, result)
 }

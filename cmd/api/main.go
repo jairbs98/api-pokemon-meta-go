@@ -12,6 +12,7 @@ import (
 
 	_ "api-pokemon-meta-go/docs"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
@@ -22,8 +23,6 @@ import (
 // @title Pokémon Meta API
 // @version 1.0
 // @description API de analítica competitiva de Pokémon migrada a Go.
-// @host localhost:8080
-// @BasePath /api/v1
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No se encontró archivo .env, usando variables de entorno")
@@ -36,6 +35,14 @@ func main() {
 	pokemonHandler := handler.NewPokemonHandler(svc)
 
 	router := gin.Default()
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
+	corsConfig.ExposeHeaders = []string{"Content-Length"}
+
+	router.Use(cors.New(corsConfig))
 
 	router.GET("/debug-swagger", func(c *gin.Context) {
 		doc, err := swag.ReadDoc("swagger")

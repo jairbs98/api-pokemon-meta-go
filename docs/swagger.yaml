@@ -1,4 +1,3 @@
-basePath: /api/v1
 definitions:
   api-pokemon-meta-go_internal_domain.ErrorResponse:
     properties:
@@ -82,7 +81,6 @@ definitions:
       usage_percentage:
         type: number
     type: object
-host: localhost:8080
 info:
   contact: {}
   description: API de analítica competitiva de Pokémon migrada a Go.
