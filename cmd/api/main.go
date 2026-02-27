@@ -22,8 +22,6 @@ import (
 // @title Pokémon Meta API
 // @version 1.0
 // @description API de analítica competitiva de Pokémon migrada a Go.
-// @host localhost:8080
-// @BasePath /api/v1
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No se encontró archivo .env, usando variables de entorno")
