@@ -83,4 +83,9 @@ type PokemonRepository interface {
 	GetSpeedCreepers(tier, gen string) ([]SpeedCreeperItem, error)
 	GetWallbreakers(tier, gen, moveType string) ([]WallbreakerItem, error)
 	GetPokemonTrend(pokemonName, tier, gen string) (float64, error)
+	GetStallIndex(tier, gen string) (float64, error)
+}
+
+type StallIndexResponse struct {
+	StallPercentage float64 `json:"stall_percentage"`
 }

@@ -15,6 +15,47 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/analytics/stall-index": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Obtener Índice de Stall",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "ou",
+                        "description": "Tier",
+                        "name": "tier",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "gen9",
+                        "description": "Generation",
+                        "name": "gen",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api-pokemon-meta-go_internal_domain.StallIndexResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api-pokemon-meta-go_internal_domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/analytics/trend": {
             "get": {
                 "produces": [
@@ -321,6 +362,14 @@ const docTemplate = `{
                 },
                 "velocidad": {
                     "type": "integer"
+                }
+            }
+        },
+        "api-pokemon-meta-go_internal_domain.StallIndexResponse": {
+            "type": "object",
+            "properties": {
+                "stall_percentage": {
+                    "type": "number"
                 }
             }
         },

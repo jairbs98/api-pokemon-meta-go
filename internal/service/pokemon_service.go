@@ -68,3 +68,14 @@ func (s *PokemonService) GetPokemonTrend(pokemonName, tier, gen string) (*domain
 		History:     history,
 	}, nil
 }
+
+func (s *PokemonService) GetStallIndex(tier, gen string) (*domain.StallIndexResponse, error) {
+	index, err := s.repo.GetStallIndex(tier, gen)
+	if err != nil {
+		return nil, err
+	}
+
+	return &domain.StallIndexResponse{
+		StallPercentage: index,
+	}, nil
+}

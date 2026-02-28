@@ -69,6 +69,11 @@ definitions:
       velocidad:
         type: integer
     type: object
+  api-pokemon-meta-go_internal_domain.StallIndexResponse:
+    properties:
+      stall_percentage:
+        type: number
+    type: object
   api-pokemon-meta-go_internal_domain.TrendPoint:
     properties:
       day:
@@ -95,6 +100,33 @@ info:
   title: Pokémon Meta API
   version: "1.0"
 paths:
+  /analytics/stall-index:
+    get:
+      parameters:
+      - default: ou
+        description: Tier
+        in: query
+        name: tier
+        type: string
+      - default: gen9
+        description: Generation
+        in: query
+        name: gen
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api-pokemon-meta-go_internal_domain.StallIndexResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api-pokemon-meta-go_internal_domain.ErrorResponse'
+      summary: Obtener Índice de Stall
+      tags:
+      - Analytics
   /analytics/trend:
     get:
       parameters:
