@@ -14,13 +14,17 @@ type PokemonUsageStats struct {
 	UsagePercentage float64         `gorm:"column:usage_percentage" json:"usage_percentage"`
 	Rank            int             `gorm:"column:rank" json:"rank"`
 	BaseStats       json.RawMessage `gorm:"column:base_stats" json:"base_stats"`
-	Abilities       json.RawMessage `gorm:"column:abilities" json:"abilities"`
-	Items           json.RawMessage `gorm:"column:items" json:"items"`
-	Moves           json.RawMessage `gorm:"column:moves" json:"moves"`
-	Spreads         json.RawMessage `gorm:"column:spreads" json:"spreads"`
-	Natures         json.RawMessage `gorm:"column:natures" json:"natures"`
-	Teammates       json.RawMessage `gorm:"column:teammates" json:"teammates"`
-	CreatedAt       time.Time       `gorm:"column:created_at" json:"created_at"`
+
+	Types     json.RawMessage `gorm:"column:types" json:"types"`
+	TeraTypes json.RawMessage `gorm:"column:tera_types" json:"tera_types"`
+
+	Abilities json.RawMessage `gorm:"column:abilities" json:"abilities"`
+	Items     json.RawMessage `gorm:"column:items" json:"items"`
+	Moves     json.RawMessage `gorm:"column:moves" json:"moves"`
+	Spreads   json.RawMessage `gorm:"column:spreads" json:"spreads"`
+	Natures   json.RawMessage `gorm:"column:natures" json:"natures"`
+	Teammates json.RawMessage `gorm:"column:teammates" json:"teammates"`
+	CreatedAt time.Time       `gorm:"column:created_at" json:"created_at"`
 }
 
 func (PokemonUsageStats) TableName() string {
@@ -28,17 +32,21 @@ func (PokemonUsageStats) TableName() string {
 }
 
 type MetaSnapshotItem struct {
-	Rank            int             `gorm:"column:rank" json:"rank"`
-	Name            string          `gorm:"column:name" json:"name"`
-	UsagePercentage float64         `gorm:"column:usage_percentage" json:"usage_percentage"`
-	TopItem         *string         `gorm:"column:top_item" json:"top_item"`
-	TopAbility      *string         `gorm:"column:top_ability" json:"top_ability"`
-	Items           json.RawMessage `gorm:"column:items" json:"items"`
-	Abilities       json.RawMessage `gorm:"column:abilities" json:"abilities"`
-	Moves           json.RawMessage `gorm:"column:moves" json:"moves"`
-	Spreads         json.RawMessage `gorm:"column:spreads" json:"spreads"`
-	Natures         json.RawMessage `gorm:"column:natures" json:"natures"`
-	BaseStats       json.RawMessage `gorm:"column:base_stats" json:"base_stats"`
+	Rank            int     `gorm:"column:rank" json:"rank"`
+	Name            string  `gorm:"column:name" json:"name"`
+	UsagePercentage float64 `gorm:"column:usage_percentage" json:"usage_percentage"`
+	TopItem         *string `gorm:"column:top_item" json:"top_item"`
+	TopAbility      *string `gorm:"column:top_ability" json:"top_ability"`
+
+	Types     json.RawMessage `gorm:"column:types" json:"types"`
+	TeraTypes json.RawMessage `gorm:"column:tera_types" json:"tera_types"`
+
+	Items     json.RawMessage `gorm:"column:items" json:"items"`
+	Abilities json.RawMessage `gorm:"column:abilities" json:"abilities"`
+	Moves     json.RawMessage `gorm:"column:moves" json:"moves"`
+	Spreads   json.RawMessage `gorm:"column:spreads" json:"spreads"`
+	Natures   json.RawMessage `gorm:"column:natures" json:"natures"`
+	BaseStats json.RawMessage `gorm:"column:base_stats" json:"base_stats"`
 }
 
 type SpeedCreeperItem struct {

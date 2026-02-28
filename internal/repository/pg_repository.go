@@ -16,10 +16,12 @@ func NewPostgresPokemonRepository(db *gorm.DB) domain.PokemonRepository {
 
 func (r *pgPokemonRepository) GetMetaSnapshot(tier, gen string, limit int) ([]domain.MetaSnapshotItem, error) {
 	var results []domain.MetaSnapshotItem
+
 	query := `
 		SELECT 
 			rank, name, usage_percentage, 
 			items->>0 as top_item, abilities->>0 as top_ability,
+			types, tera_types,
 			items, abilities, moves, spreads, natures, base_stats
 		FROM pokemon_usage_stats 
 		WHERE tier = ? AND generation = ? 

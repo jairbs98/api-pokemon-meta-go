@@ -34,10 +34,18 @@ definitions:
         items:
           type: integer
         type: array
+      tera_types:
+        items:
+          type: integer
+        type: array
       top_ability:
         type: string
       top_item:
         type: string
+      types:
+        items:
+          type: integer
+        type: array
       usage_percentage:
         type: number
     type: object
