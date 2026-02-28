@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings" // Importante para validar prefijos y sufijos de las URLs
+	"strings"
 
 	"api-pokemon-meta-go/internal/handler"
 	"api-pokemon-meta-go/internal/repository"

@@ -270,11 +270,23 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
+                "tera_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "top_ability": {
                     "type": "string"
                 },
                 "top_item": {
                     "type": "string"
+                },
+                "types": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "usage_percentage": {
                     "type": "number"
