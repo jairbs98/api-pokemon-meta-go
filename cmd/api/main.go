@@ -79,6 +79,7 @@ func main() {
 		api.GET("/anti-meta/speed-creepers", pokemonHandler.GetSpeedCreepers)
 		api.GET("/anti-meta/wallbreakers", pokemonHandler.GetWallbreakers)
 		api.GET("/analytics/trend", pokemonHandler.GetPokemonTrend)
+		api.GET("/analytics/stall-index", pokemonHandler.GetStallIndex)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

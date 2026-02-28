@@ -132,3 +132,25 @@ func (h *PokemonHandler) GetPokemonTrend(c *gin.Context) {
 
 	c.JSON(http.StatusOK, result)
 }
+
+// GetStallIndex godoc
+// @Summary Obtener Índice de Stall
+// @Tags Analytics
+// @Produce json
+// @Param tier query string false "Tier" default(ou)
+// @Param gen query string false "Generation" default(gen9)
+// @Success 200 {object} domain.StallIndexResponse
+// @Failure 500 {object} domain.ErrorResponse
+// @Router /analytics/stall-index [get]
+func (h *PokemonHandler) GetStallIndex(c *gin.Context) {
+	tier := c.DefaultQuery("tier", "ou")
+	gen := c.DefaultQuery("gen", "gen9")
+
+	result, err := h.service.GetStallIndex(tier, gen)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
