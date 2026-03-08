@@ -21,4 +21,5 @@ jobs:
             app_type: "go-api"
             deploy_type: "container"
             port: "8080"
+            language_version: "1.25"
         secrets: inherit
