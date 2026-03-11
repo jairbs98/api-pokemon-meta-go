@@ -25,30 +25,37 @@ func (r *pgPokemonRepository) GetMetaSnapshot(tier, gen string, limit int) ([]do
 			items, abilities, moves, spreads, natures, base_stats
 		FROM pokemon_usage_stats 
 		WHERE tier = ? AND generation = ? 
+		  AND snapshot_date = (SELECT MAX(snapshot_date) FROM pokemon_usage_stats WHERE tier = ? AND generation = ?)
 		ORDER BY rank ASC LIMIT ?;
 	`
-	err := r.db.Raw(query, tier, gen, limit).Scan(&results).Error
+	err := r.db.Raw(query, tier, gen, tier, gen, limit).Scan(&results).Error
 	return results, err
 }
 
 func (r *pgPokemonRepository) GetSpeedCreepers(tier, gen string) ([]domain.SpeedCreeperItem, error) {
 	var results []domain.SpeedCreeperItem
 	query := `
-		WITH TopSpeed AS (
+		WITH LatestSnapshot AS (
+			SELECT MAX(snapshot_date) as max_date FROM pokemon_usage_stats WHERE tier = ? AND generation = ?
+		),
+		TopSpeed AS (
 			SELECT MAX((SELECT value->>'base_stat' FROM jsonb_array_elements(base_stats::jsonb) WHERE value->'stat'->>'name' = 'speed')::int) as max_meta_speed
-			FROM pokemon_usage_stats WHERE tier = ? AND generation = ? AND rank <= 10
+			FROM pokemon_usage_stats 
+			WHERE tier = ? AND generation = ? AND rank <= 10
+			  AND snapshot_date = (SELECT max_date FROM LatestSnapshot)
 		)
 		SELECT 
-			name, usage_percentage,
-			(SELECT value->>'base_stat' FROM jsonb_array_elements(base_stats::jsonb) WHERE value->'stat'->>'name' = 'speed')::int as velocidad,
-			(SELECT value->>'base_stat' FROM jsonb_array_elements(base_stats::jsonb) WHERE value->'stat'->>'name' = 'attack')::int as ataque
-		FROM pokemon_usage_stats, TopSpeed
-		WHERE tier = ? AND generation = ?
-		  AND (SELECT value->>'base_stat' FROM jsonb_array_elements(base_stats::jsonb) WHERE value->'stat'->>'name' = 'speed')::int > TopSpeed.max_meta_speed
-		  AND usage_percentage < 5.0
+			p.name, p.usage_percentage,
+			(SELECT value->>'base_stat' FROM jsonb_array_elements(p.base_stats::jsonb) WHERE value->'stat'->>'name' = 'speed')::int as velocidad,
+			(SELECT value->>'base_stat' FROM jsonb_array_elements(p.base_stats::jsonb) WHERE value->'stat'->>'name' = 'attack')::int as ataque
+		FROM pokemon_usage_stats p, TopSpeed
+		WHERE p.tier = ? AND p.generation = ?
+		  AND p.snapshot_date = (SELECT max_date FROM LatestSnapshot)
+		  AND (SELECT value->>'base_stat' FROM jsonb_array_elements(p.base_stats::jsonb) WHERE value->'stat'->>'name' = 'speed')::int > TopSpeed.max_meta_speed
+		  AND p.usage_percentage < 5.0
 		ORDER BY velocidad DESC LIMIT 5;
 	`
-	err := r.db.Raw(query, tier, gen, tier, gen).Scan(&results).Error
+	err := r.db.Raw(query, tier, gen, tier, gen, tier, gen).Scan(&results).Error
 	return results, err
 }
 
@@ -61,24 +68,36 @@ func (r *pgPokemonRepository) GetWallbreakers(tier, gen, moveType string) ([]dom
 			m->>'name' as move_name
 		FROM pokemon_usage_stats p, jsonb_array_elements(p.moves::jsonb) m
 		WHERE p.tier = ? AND p.generation = ?
+		  AND p.snapshot_date = (SELECT MAX(snapshot_date) FROM pokemon_usage_stats WHERE tier = ? AND generation = ?)
 		  AND m->>'type' = ? AND (m->>'power')::int >= 75 AND p.usage_percentage < 15.0
 		ORDER BY atk_base DESC LIMIT 10;
 	`
-	err := r.db.Raw(query, tier, gen, moveType).Scan(&results).Error
+	err := r.db.Raw(query, tier, gen, tier, gen, moveType).Scan(&results).Error
 	return results, err
 }
 
-func (r *pgPokemonRepository) GetPokemonTrend(pokemonName, tier, gen string) (float64, error) {
-	var usage float64
-	query := `SELECT usage_percentage FROM pokemon_usage_stats WHERE name = ? AND tier = ? AND generation = ?`
-	err := r.db.Raw(query, pokemonName, tier, gen).Scan(&usage).Error
-	return usage, err
+func (r *pgPokemonRepository) GetPokemonTrend(pokemonName, tier, gen string) ([]domain.TrendPoint, error) {
+	var results []domain.TrendPoint
+	query := `
+		SELECT 
+			snapshot_date as day,
+			snapshot_date as label,
+			usage_percentage as value
+		FROM pokemon_usage_stats 
+		WHERE name = ? AND tier = ? AND generation = ?
+		ORDER BY snapshot_date ASC
+	`
+	err := r.db.Raw(query, pokemonName, tier, gen).Scan(&results).Error
+	return results, err
 }
 
 func (r *pgPokemonRepository) GetStallIndex(tier, gen string) (float64, error) {
 	var stallIndex float64
 	query := `
-		WITH PokemonStats AS (
+		WITH LatestSnapshot AS (
+			SELECT MAX(snapshot_date) as max_date FROM pokemon_usage_stats WHERE tier = ? AND generation = ?
+		),
+		PokemonStats AS (
 			SELECT 
 				usage_percentage,
 				moves,
@@ -90,6 +109,7 @@ func (r *pgPokemonRepository) GetStallIndex(tier, gen string) (float64, error) {
 				(SELECT (value->>'base_stat')::int FROM jsonb_array_elements(base_stats::jsonb) WHERE value->'stat'->>'name' = 'speed') as spe
 			FROM pokemon_usage_stats
 			WHERE tier = ? AND generation = ?
+			  AND snapshot_date = (SELECT max_date FROM LatestSnapshot)
 		)
 		SELECT COALESCE(SUM(usage_percentage) / 6, 0) as stall_index
 		FROM PokemonStats
@@ -106,6 +126,6 @@ func (r *pgPokemonRepository) GetStallIndex(tier, gen string) (float64, error) {
 			  )
 		  );
 	`
-	err := r.db.Raw(query, tier, gen).Scan(&stallIndex).Error
+	err := r.db.Raw(query, tier, gen, tier, gen).Scan(&stallIndex).Error
 	return stallIndex, err
 }
