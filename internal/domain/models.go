@@ -11,6 +11,7 @@ type PokemonUsageStats struct {
 	Name            string          `gorm:"column:name" json:"name"`
 	Tier            string          `gorm:"column:tier" json:"tier"`
 	Generation      string          `gorm:"column:generation" json:"generation"`
+	SnapshotDate    string          `gorm:"column:snapshot_date" json:"snapshot_date"`
 	UsagePercentage float64         `gorm:"column:usage_percentage" json:"usage_percentage"`
 	Rank            int             `gorm:"column:rank" json:"rank"`
 	BaseStats       json.RawMessage `gorm:"column:base_stats" json:"base_stats"`
@@ -82,7 +83,7 @@ type PokemonRepository interface {
 	GetMetaSnapshot(tier, gen string, limit int) ([]MetaSnapshotItem, error)
 	GetSpeedCreepers(tier, gen string) ([]SpeedCreeperItem, error)
 	GetWallbreakers(tier, gen, moveType string) ([]WallbreakerItem, error)
-	GetPokemonTrend(pokemonName, tier, gen string) (float64, error)
+	GetPokemonTrend(pokemonName, tier, gen string) ([]TrendPoint, error)
 	GetStallIndex(tier, gen string) (float64, error)
 }
 
